@@ -28,7 +28,7 @@ dropdown_options = [
     {'label': 'Recession Period Statistics', 'value': 'Recession Period Statistics'}
 ]
 # List of years 
-year_list = list(range(1980, 2024, 1))
+year_list = list(range(1980, 2024))
 #---------------------------------------------------------------------------------------
 # Create the layout of the app
 app.layout = html.Div([
@@ -46,7 +46,7 @@ app.layout = html.Div([
     ]),
     html.Div(dcc.Dropdown(
             id='select-year',
-            options=[{'label': i, 'value': i} for i in year_list],
+            options=[{'label': str(year), 'value': year} for year in year_list],
             value=year_list,
             style={'width': '80%', 'padding': '3px', 'fontSize': '20px', 'textAlignLast': 'center'}
         )),
@@ -56,24 +56,21 @@ app.layout = html.Div([
 #TASK 2.4: Creating Callbacks
 # Define the callback function to update the input container based on the selected statistics
 @app.callback(
-    Output(component_id='......', component_property='....'),
-    Input(component_id='..........',component_property='....'))
+    Output(component_id='select year', component_property='disabled'),
+    Input(component_id='dropdown-statistics',component_property='value'))
 
-def update_input_container('.......'):
-    if selected_statistics =='........': 
-        return False
-    else: 
-        return None #Change
+def update_input_container(value):
+    return value != 'Yearly Statistics'
 
 #Callback for plotting
 # Define the callback function to update the input container based on the selected statistics
 @app.callback(
-    Output(component_id='...', component_property='...'),
-    [Input(component_id='...', component_property='...'), Input(component_id='...', component_property='...')])
+    Output(component_id='plot1', component_property='children'),
+    [Input(component_id='select-year', component_property='value'), Input(component_id='dropdown-statistics', component_property='value')])
 
 
-def update_output_container(".....", "....."):
-    if "....." == 'Recession Period Statistics':
+def update_output_container(selected_year, selected_statistic):
+    if selected_statistic == 'Recession Period Statistics':
         # Filter the data for recession periods
         recession_data = data[data['Recession'] == 1]
         
@@ -83,7 +80,7 @@ def update_output_container(".....", "....."):
         # use groupby to create relevant data for plotting
         yearly_rec=recession_data.groupby('...')['...'].mean().reset_index()
         R_chart1 = dcc.Graph(
-            figure=px"......"(".....", 
+            figure=px.......(".....", 
                 x='....',
                 y='......',
                 title="Average Automobile Sales fluctuation over Recession Period"))
