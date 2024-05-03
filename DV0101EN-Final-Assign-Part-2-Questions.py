@@ -51,7 +51,7 @@ app.layout = html.Div([
             style={'width': '80%', 'padding': '3px', 'fontSize': '20px', 'textAlignLast': 'center'}
         )),
     html.Div([#TASK 2.3: Add a division for output display
-    html.Div(id='..........', className='..........', style={'.........'}),])
+    html.Div(id='output-container', className='chart-grid', style={'display': 'flex'}),])
 ])
 #TASK 2.4: Creating Callbacks
 # Define the callback function to update the input container based on the selected statistics
