@@ -3,6 +3,7 @@ plotly
 pandas
 seaborn
 folium
+more-itertools
 
 # Dev
 pylint
