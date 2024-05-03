@@ -12,7 +12,8 @@ import plotly.graph_objs as go
 import plotly.express as px
 
 # Load the data using pandas
-data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/historical_automobile_sales.csv')
+data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/\
+IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/historical_automobile_sales.csv')
 
 # Initialize the Dash app
 app = dash.Dash(__name__)
@@ -23,32 +24,34 @@ app = dash.Dash(__name__)
 #---------------------------------------------------------------------------------
 # Create the dropdown menu options
 dropdown_options = [
-    {'label': '...........', 'value': 'Yearly Statistics'},
-    {'label': 'Recession Period Statistics', 'value': '.........'}
+    {'label': 'Yearly Statistics', 'value': 'Yearly Statistics'},
+    {'label': 'Recession Period Statistics', 'value': 'Recession Period Statistics'}
 ]
 # List of years 
-year_list = [i for i in range(1980, 2024, 1)]
+year_list = list(range(1980, 2024, 1))
 #---------------------------------------------------------------------------------------
 # Create the layout of the app
 app.layout = html.Div([
     #TASK 2.1 Add title to the dashboard
-    html.H1("..............."),#May include style for title
+    html.H1("Automobile Sales Statistics Dashboard"),#May include style for title
     html.Div([#TASK 2.2: Add two dropdown menus
         html.Label("Select Statistics:"),
         dcc.Dropdown(
-            id='...........',
-            options=...................,
-            value='.................',
-            placeholder='.................'
+            id='dropdown-statistics',
+            options=[dropdown_options],
+            placeholder='Select a report type.',
+            value='Select Statistics',
+            style={'width': '80%', 'padding': '3px', 'fontSize': '20px', 'textAlignLast': 'center'}
         )
     ]),
     html.Div(dcc.Dropdown(
             id='select-year',
             options=[{'label': i, 'value': i} for i in year_list],
-            value='...................'
+            value=year_list,
+            style={'width': '80%', 'padding': '3px', 'fontSize': '20px', 'textAlignLast': 'center'}
         )),
     html.Div([#TASK 2.3: Add a division for output display
-    html.Div(id='..........', className='..........', style={.........}),])
+    html.Div(id='..........', className='..........', style={'.........'}),])
 ])
 #TASK 2.4: Creating Callbacks
 # Define the callback function to update the input container based on the selected statistics
@@ -56,11 +59,11 @@ app.layout = html.Div([
     Output(component_id='......', component_property='....'),
     Input(component_id='..........',component_property='....'))
 
-def update_input_container(.......):
+def update_input_container('.......'):
     if selected_statistics =='........': 
         return False
     else: 
-        return ......
+        return None #Change
 
 #Callback for plotting
 # Define the callback function to update the input container based on the selected statistics
@@ -69,8 +72,8 @@ def update_input_container(.......):
     [Input(component_id='...', component_property='...'), Input(component_id='...', component_property='...')])
 
 
-def update_output_container(....., .....):
-    if ..... == 'Recession Period Statistics':
+def update_output_container(".....", "....."):
+    if "....." == 'Recession Period Statistics':
         # Filter the data for recession periods
         recession_data = data[data['Recession'] == 1]
         
@@ -80,7 +83,7 @@ def update_output_container(....., .....):
         # use groupby to create relevant data for plotting
         yearly_rec=recession_data.groupby('...')['...'].mean().reset_index()
         R_chart1 = dcc.Graph(
-            figure=px......(....., 
+            figure=px"......"(".....", 
                 x='....',
                 y='......',
                 title="Average Automobile Sales fluctuation over Recession Period"))
