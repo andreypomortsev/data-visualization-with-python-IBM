@@ -1,0 +1,9 @@
+dash
+plotly
+pandas
+seaborn
+folium
+
+# Dev
+pylint
+black
