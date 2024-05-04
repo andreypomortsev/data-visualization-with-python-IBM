@@ -9,7 +9,8 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 import pandas as pd
-import plotly.graph_objs as go
+
+# import plotly.graph_objs as go
 import plotly.express as px
 
 # Load the data using pandas
@@ -24,6 +25,7 @@ data["Vehicle_Type"] = data["Vehicle_Type"].apply(
     .replace("car", " car")
     .replace("Sports", "Sports car")
 )
+
 
 # Initialize the Dash app
 app = dash.Dash(__name__)
@@ -47,7 +49,7 @@ dropdown_style = {
     "fontSize": "20px",
     "textAlign": "center",
     "flexWrap": "wrap",
-    "justifyContent": "right",
+    "justifyContent": "center",
 }
 
 # Create the layout of the app
@@ -71,12 +73,13 @@ app.layout = html.Div(
         ),
         html.Div(
             [
+                html.Label("Select a Year:"),
                 dcc.Dropdown(
                     id="select-year",
                     options=[{"label": str(year), "value": year} for year in year_list],
                     placeholder="Select a year.",
                     style=dropdown_style,
-                )
+                ),
             ]
         ),
         html.Div(
@@ -84,7 +87,7 @@ app.layout = html.Div(
                 html.Div(
                     id="output-container",
                     className="chart-grid",
-                    style={"display": "flex", "flexWrap": "wrap"},
+                    style={"display": "flex"},
                 ),
             ]
         ),
@@ -129,8 +132,13 @@ def update_output_container(input_year, selected_statistics):
                 yearly_rec,
                 x="Year",
                 y="Automobile_Sales",
+                markers="o",
                 title=title_one,
-            ).update_layout(title_x=0.5)
+            )
+            .update_layout(
+                title_x=0.5, xaxis_title="Year", yaxis_title="Automobile Sales"
+            )
+            .update_traces(line=dict(dash="dot"))
         )
 
         # Plot 2 Calculate the average number of vehicles sold by vehicle type
@@ -170,14 +178,17 @@ def update_output_container(input_year, selected_statistics):
             recession_data.groupby("Vehicle_Type")["Automobile_Sales"]
             .mean()
             .reset_index()
+            .sort_values(by="Automobile_Sales", ascending=False)
         )
         R_chart4 = dcc.Graph(
             figure=px.bar(
                 unempl_vt_sales,
                 x="Vehicle_Type",
                 y="Automobile_Sales",
-                title="Some title",
-            ).update_layout(title_x=0.5)
+                title="Average Sales by Vehicle Type",
+            ).update_layout(
+                title_x=0.5, xaxis_title="Vehicle Type", yaxis_title="Automobile Sales"
+            )
         )
 
         return [
@@ -215,7 +226,9 @@ def update_output_container(input_year, selected_statistics):
         Y_chart1 = dcc.Graph(
             figure=px.line(
                 yas, x="Year", y="Automobile_Sales", title="Yearly Automobile Sales"
-            ).update_layout(title_x=0.5)
+            ).update_layout(
+                title_x=0.5, xaxis_title="Year", yaxis_title="Automobile Sales"
+            )
         )
 
         # Plot 2 Total Monthly Automobile sales using line chart.
@@ -230,12 +243,17 @@ def update_output_container(input_year, selected_statistics):
                 x="Month",
                 y="Automobile_Sales",
                 title=f"Monthly Automobile Sales in {input_year}",
-            ).update_layout(title_x=0.5)
+            ).update_layout(
+                title_x=0.5, xaxis_title="Month", yaxis_title="Automobile Sales"
+            )
         )
 
         # Plot bar chart for average number of vehicles sold during the given year
         avr_vdata = (
-            yearly_data.groupby("Vehicle_Type")["Automobile_Sales"].mean().reset_index()
+            yearly_data.groupby("Vehicle_Type", sort=False)["Automobile_Sales"]
+            .mean()
+            .reset_index()
+            .sort_values(by="Automobile_Sales", ascending=False)
         )
 
         Y_chart3 = dcc.Graph(
@@ -243,8 +261,10 @@ def update_output_container(input_year, selected_statistics):
                 avr_vdata,
                 x="Vehicle_Type",
                 y="Automobile_Sales",
-                title=f"Average Vehicles Sold by Vehicle Type in the year {input_year}",
-            ).update_layout(title_x=0.5)
+                title=f"Average Vehicles Sold by Vehicle Type in {input_year}",
+            ).update_layout(
+                title_x=0.5, xaxis_title="Vehicle Type", yaxis_title="Automobile Sales"
+            )
         )
 
         # Total Advertisement Expenditure for each vehicle using pie chart
