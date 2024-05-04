@@ -17,6 +17,13 @@ data = pd.read_csv(
     "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/\
 IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/historical_automobile_sales.csv"
 )
+# Change vehicle type names
+data["Vehicle_Type"] = data["Vehicle_Type"].apply(
+    lambda x: x.replace("familiy", "family")
+    .replace("family", " family")
+    .replace("car", " car")
+    .replace("Sports", "Sports car")
+)
 
 # Initialize the Dash app
 app = dash.Dash(__name__)
@@ -59,17 +66,19 @@ app.layout = html.Div(
             ]
         ),
         html.Div(
-            dcc.Dropdown(
-                id="select-year",
-                options=[{"label": str(year), "value": year} for year in year_list],
-                value=year_list,
-                style={
-                    "width": "80%",
-                    "padding": "3px",
-                    "fontSize": "20px",
-                    "textAlignLast": "center",
-                },
-            )
+            [
+                dcc.Dropdown(
+                    id="select-year",
+                    options=[{"label": str(year), "value": year} for year in year_list],
+                    value=year_list[0],
+                    style={
+                        "width": "80%",
+                        "padding": "3px",
+                        "fontSize": "20px",
+                        "textAlignLast": "center",
+                    },
+                )
+            ]
         ),
         html.Div(
             [  # TASK 2.3: Add a division for output display
@@ -91,7 +100,7 @@ app.layout = html.Div(
     Input(component_id="dropdown-statistics", component_property="value"),
 )
 def update_input_container(statistics: str) -> bool:
-    return statistics != "Yearly Statistics"
+    return statistics == "Yearly Statistics"
 
 
 # Callback for plotting
@@ -224,14 +233,14 @@ def update_output_container(input_year, selected_statistics):
 
         # Total Advertisement Expenditure for each vehicle using pie chart
         exp_data = (
-            yearly_data.groupby("Vehicle_Type")["Advertisement_Expenditure"]
+            yearly_data.groupby("Vehicle_Type")["Advertising_Expenditure"]
             .sum()
             .reset_index()
         )
         Y_chart4 = dcc.Graph(
             figure=px.pie(
                 exp_data,
-                values="Advertisement_Expenditure",
+                values="Advertising_Expenditure",
                 names="Vehicle_Type",
                 title="Total Advertisement Expenditure by Vehicle Type",
             )
