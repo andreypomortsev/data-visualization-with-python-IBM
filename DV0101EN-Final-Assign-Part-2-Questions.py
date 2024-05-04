@@ -40,6 +40,16 @@ dropdown_options = [
 # List of years
 year_list = list(range(1980, 2024))
 # ---------------------------------------------------------------------------------------
+# Dropdown style
+dropdown_style = {
+    "width": "80%",
+    "padding": "2px",
+    "fontSize": "20px",
+    "textAlign": "center",
+    "flexWrap": "wrap",
+    "justifyContent": "right",
+}
+
 # Create the layout of the app
 app.layout = html.Div(
     [
@@ -55,13 +65,7 @@ app.layout = html.Div(
                     id="dropdown-statistics",
                     options=dropdown_options,
                     placeholder="Select a report type.",
-                    value="Select Statistics",
-                    style={
-                        "width": "80%",
-                        "padding": "3px",
-                        "fontSize": "20px",
-                        "textAlignLast": "center",
-                    },
+                    style=dropdown_style,
                 ),
             ]
         ),
@@ -70,13 +74,8 @@ app.layout = html.Div(
                 dcc.Dropdown(
                     id="select-year",
                     options=[{"label": str(year), "value": year} for year in year_list],
-                    value=year_list[0],
-                    style={
-                        "width": "80%",
-                        "padding": "3px",
-                        "fontSize": "20px",
-                        "textAlignLast": "center",
-                    },
+                    placeholder="Select a year.",
+                    style=dropdown_style,
                 )
             ]
         ),
@@ -85,7 +84,7 @@ app.layout = html.Div(
                 html.Div(
                     id="output-container",
                     className="chart-grid",
-                    style={"display": "flex"},
+                    style={"display": "flex", "flexWrap": "wrap"},
                 ),
             ]
         ),
@@ -100,7 +99,7 @@ app.layout = html.Div(
     Input(component_id="dropdown-statistics", component_property="value"),
 )
 def update_input_container(statistics: str) -> bool:
-    return statistics == "Yearly Statistics"
+    return statistics != "Yearly Statistics"
 
 
 # Callback for plotting
@@ -131,7 +130,7 @@ def update_output_container(input_year, selected_statistics):
                 x="Year",
                 y="Automobile_Sales",
                 title=title_one,
-            )
+            ).update_layout(title_x=0.5)
         )
 
         # Plot 2 Calculate the average number of vehicles sold by vehicle type
@@ -147,7 +146,7 @@ def update_output_container(input_year, selected_statistics):
                 values="Automobile_Sales",
                 names="Vehicle_Type",
                 title="Average Automobile Sales by Vehicle Type",
-            )
+            ).update_layout(title_x=0.5)
         )
 
         # Plot 3 Pie chart for total expenditure share by vehicle type during recessions
@@ -163,7 +162,7 @@ def update_output_container(input_year, selected_statistics):
                 values="Advertising_Expenditure",
                 names="Vehicle_Type",
                 title="Total Expenditure Share by Vehicle Type",
-            )
+            ).update_layout(title_x=0.5)
         )
 
         # Plot 4 bar chart for the effect of unemployment rate on vehicle type and sales
@@ -178,19 +177,29 @@ def update_output_container(input_year, selected_statistics):
                 x="Vehicle_Type",
                 y="Automobile_Sales",
                 title="Some title",
-            )
+            ).update_layout(title_x=0.5)
         )
 
         return [
+            # First row with two plots
             html.Div(
-                className="chart-item",
-                children=[html.Div(children=R_chart1), html.Div(children=R_chart2)],
-                style={"display": "flex"},
+                [
+                    html.Div(children=R_chart1, className="chart-item"),
+                    html.Div(children=R_chart3, className="chart-item"),
+                ],
+                className="chart-row",
+                style={"display": "flex", "flexWrap": "wrap"},
             ),
+            # Second row with two plots
             html.Div(
-                className="chart-item",
-                children=[html.Div(children=R_chart3), html.Div(children=R_chart4)],
-                style={"display": "flex"},
+                [
+                    html.Div(children=R_chart2, className="chart-item"),
+                    html.Div(children=R_chart4, className="chart-item"),
+                ],
+                className="chart-row",
+                style={
+                    "display": "flex",
+                },
             ),
         ]
 
@@ -206,15 +215,22 @@ def update_output_container(input_year, selected_statistics):
         Y_chart1 = dcc.Graph(
             figure=px.line(
                 yas, x="Year", y="Automobile_Sales", title="Yearly Automobile Sales"
-            )
+            ).update_layout(title_x=0.5)
         )
 
         # Plot 2 Total Monthly Automobile sales using line chart.
-        mas = data.groupby("Month")["Automobile_Sales"].mean().reset_index()
+        mas = (
+            yearly_data.groupby("Month", sort=False)["Automobile_Sales"]
+            .mean()
+            .reset_index()
+        )
         Y_chart2 = dcc.Graph(
             figure=px.line(
-                mas, x="Month", y="Automobile_Sales", title="Monthly Automobile Sales"
-            )
+                mas,
+                x="Month",
+                y="Automobile_Sales",
+                title=f"Monthly Automobile Sales in {input_year}",
+            ).update_layout(title_x=0.5)
         )
 
         # Plot bar chart for average number of vehicles sold during the given year
@@ -228,7 +244,7 @@ def update_output_container(input_year, selected_statistics):
                 x="Vehicle_Type",
                 y="Automobile_Sales",
                 title=f"Average Vehicles Sold by Vehicle Type in the year {input_year}",
-            ),
+            ).update_layout(title_x=0.5)
         )
 
         # Total Advertisement Expenditure for each vehicle using pie chart
@@ -242,26 +258,34 @@ def update_output_container(input_year, selected_statistics):
                 exp_data,
                 values="Advertising_Expenditure",
                 names="Vehicle_Type",
-                title="Total Advertisement Expenditure by Vehicle Type",
-            )
+                title=f"Total Advertisement Expenditure by Vehicle Type in {input_year}",
+            ).update_layout(title_x=0.5)
         )
 
         # TASK 2.6: Returning the graphs for displaying Yearly data
         return [
+            # First row with two plots
             html.Div(
-                className="chart-item",
-                children=[html.Div(children=Y_chart1), html.Div(children=Y_chart2)],
-                style={"display": "flex"},
+                [
+                    html.Div(children=Y_chart2, className="chart-item"),
+                    html.Div(children=Y_chart4, className="chart-item"),
+                ],
+                className="chart-row",
+                style={
+                    "display": "flex",
+                    "flexWrap": "wrap",
+                },
             ),
+            # Second row with two plots
             html.Div(
-                className="chart-item",
-                children=[html.Div(children=Y_chart3), html.Div(children=Y_chart4)],
-                style={"display": "flex"},
+                [
+                    html.Div(children=Y_chart1, className="chart-item"),
+                    html.Div(children=Y_chart3, className="chart-item"),
+                ],
+                className="chart-row",
+                style={"display": "flex", "flexWrap": "wrap"},
             ),
         ]
-
-    else:
-        return None
 
 
 # Run the Dash app
