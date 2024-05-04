@@ -126,7 +126,7 @@ def update_output_container(input_year, selected_statistics):
         yearly_rec = (
             recession_data.groupby("Year")["Automobile_Sales"].mean().reset_index()
         )
-        title_one = "Average Automobile Sales fluctuation over Recession Period"
+        title_one = "Average Automobile Sales Fluctuation over Recession Period"
         R_chart1 = dcc.Graph(
             figure=px.line(
                 yearly_rec,
@@ -208,9 +208,7 @@ def update_output_container(input_year, selected_statistics):
                     html.Div(children=R_chart4, className="chart-item"),
                 ],
                 className="chart-row",
-                style={
-                    "display": "flex",
-                },
+                style={"display": "flex", "flexWrap": "wrap"},
             ),
         ]
 
