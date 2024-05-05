@@ -1,8 +1,10 @@
 # Data Visualization with Python (IBM)
 
-This repository contains a Dash application for data visualization with Python, as well as [static analysis Jupyter notebook](static_analysis.ipynb).
+This repository contains a Dash application for data visualization with Python, as well as [static analysis Jupyter notebook](static_analysis.ipynb) with some beautiful [plots](plots/), like:
 
-## Usage
+![Automobile Sales Over Years](plots/Line_Plot_1.png)
+![Estimation of ad Expenditure](plots/Pie_1.png)
+## Usage of the Dash app
 
 ### Clone the Repository
 
